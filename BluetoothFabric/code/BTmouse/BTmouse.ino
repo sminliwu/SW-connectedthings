@@ -55,7 +55,6 @@ void loop()
     char input = Serial.read();
     // send mouse down
     if (input == 's') {
-      Serial.println("received down");
       bluetooth.write(0xFD); // start byte
       bluetooth.write(0x5);
       bluetooth.write(0x2);
@@ -87,8 +86,17 @@ void loop()
       bluetooth.write(-5); // X movement
       bluetooth.write((byte)0);  // Y movement
       bluetooth.write((byte)0);      
+    } else if (input == 'f'){ // send mouse click
+      Serial.println("click");
+      bluetooth.write(0xFD); // start byte
+      bluetooth.write(0x5);
+      bluetooth.write(0x2);
+      bluetooth.write(0x1); // left button click?
+      bluetooth.write((byte)0); // no X movement
+      bluetooth.write((byte)0); // no Y movement
+      bluetooth.write((byte)0); // no wheel movement
     } else {
-      Serial.println("invalid mouse direction");
+      Serial.println("invalid mouse input");
     }
   }
   // and loop forever and ever!

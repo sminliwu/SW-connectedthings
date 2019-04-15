@@ -43,7 +43,7 @@ void setup()
 void loop()
 { 
   bool buttonReading = digitalRead(dPin);
-  //Serial.println(buttonReading);
+  Serial.println(buttonReading);
   if(bluetooth.available())  // If the bluetooth sent any characters
   {
     // Send any characters the bluetooth prints to the serial monitor
