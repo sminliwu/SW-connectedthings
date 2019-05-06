@@ -1,9 +1,9 @@
 /* Bluetooth (RN-42) and mouse (ADNS)
- *  Based on code by J. Kicklighter 
- *  (https://github.com/mrjohnk/ADNS-9800) and 
- *  on Bluetooth Serial Passthrough Sketch by Jim Lindblom
- *  modifications by: Shanel Wu
- * 
+ *  Based on code by: 
+ *  - J. Kicklighter (https://github.com/mrjohnk/ADNS-9800), 
+ *  - R. Priyadarshi (https://github.com/rpriyadarshi/ADNS9800_LCD) 
+ *  - Bluetooth Serial Passthrough Sketch by Jim Lindblom
+ *  Modifications by: Shanel Wu 
  */
 
 #include <SoftwareSerial.h>
@@ -429,7 +429,6 @@ int8_t convert_twos_compliment(byte b){
   if(b & 0x80) {
     val = -1 * ((b ^ 0xff) + 1);
   }
-  //Serial.println(val);
   return val;
 }
 
@@ -444,7 +443,6 @@ int16_t convert_twos_compliment(uint16_t b){
 
 int16_t convert_twos_compliment(byte l, byte h){
   uint16_t b = join_byte(l, h);
-  Serial.println(b, BIN);
   return convert_twos_compliment(b);
 }
 
@@ -551,8 +549,8 @@ void loop() {
     voltage = analogRead(aPin)/8;
     Vdel = voltage - pVoltage;
     pVoltage = voltage; // update voltage
-    // get movement from ADNS
     
+    // get movement from ADNS
     update_motion_burst_data();
     int Xdel = _ux/mvtScale;
     int Ydel = _uy/mvtScale;
@@ -562,11 +560,12 @@ void loop() {
       Serial.print(" | ");
       Serial.print("y = ");
       Serial.println(Ydel);
-    }  
+    }
+      
     // build HID report and send over Bluetooth
     bluetooth.write(0xFD); // start byte
     bluetooth.write(0x5); // size: 5, standard mouse report
-    bluetooth.write(0x2); // send 0x2 as byte #1, part of format
+    bluetooth.write(0x2); // send 0x2 as byte #1/5, part of format
   
     // byte #2
     if (voltage > 0) {
@@ -598,5 +597,7 @@ void loop() {
     // Send any characters the Serial monitor prints to the bluetooth
     bluetooth.print((char)Serial.read());
   }
-  delay(10);
+  delay(10); 
+  // this delay can be tweaked, but sending HID reports too frequently to
+  // the computer can result in strange delays or non-communication
 }
